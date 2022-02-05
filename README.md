@@ -1,17 +1,14 @@
 # workers-jwt
 
-[`@sagi.io/workers-jwt`](https://www.npmjs.com/package/@sagi.io/workers-jwt) helps you
+[`@mattreid.dev/workers-jwt`](https://www.npmjs.com/package/@mattreid.dev/workers-jwt) helps you
 generate a `JWT` on Cloudflare Workers with the WebCrypto API. Helper function for GCP Service Accounts included.
 
-[![CircleCI](https://circleci.com/gh/sagi/workers-jwt.svg?style=svg)](https://circleci.com/gh/sagi/workers-jwt)
-[![Coverage Status](https://coveralls.io/repos/github/sagi/workers-jwt/badge.svg?branch=master)](https://coveralls.io/github/sagi/workers-jwt?branch=master)
-[![MIT License](https://img.shields.io/npm/l/@sagi.io/workers-jwt.svg?style=flat-square)](http://opensource.org/licenses/MIT)
-[![version](https://img.shields.io/npm/v/@sagi.io/workers-jwt.svg?style=flat-square)](http://npm.im/@sagi.io/workers-jwt)
+Fork of [@sagi.io/workers-jwt](https://github.com/sagi/workers-jwt) This fork does not work with Node.js but does with Cloudflare Workers.
 
 ## Installation
 
 ~~~
-$ npm i @sagi.io/workers-jwt
+$ npm i @mattreid.dev/workers-jwt
 ~~~
 
 ## API
@@ -28,7 +25,6 @@ const getToken = async ({
   privateKeyPEM,
   payload,
   alg = 'RS256',
-  cryptoImppl = null,
   headerAdditions = {},
 }) => { ... }
 ```
@@ -38,7 +34,6 @@ Where:
   - **`privateKeyPEM`** is the private key `string` in `PEM` format.
   - **`payload`** is the `JSON` payload to be signed, i.e. the `{ aud, iat, exp, iss, sub, scope, ... }`.
   - **`alg`** is the signing algorithm as defined in [`RFC7518`](https://tools.ietf.org/html/rfc7518#section-3.1), currently only `RS256` and `ES256` are supported.
-  - **`cryptoImpl`** is a `WebCrypto` `API` implementation. Cloudflare Workers support `WebCrypto` out of the box. For `Node.js` you can use [`node-webcrypto-ossl`](https://github.com/PeculiarVentures/node-webcrypto-ossl) - see examples below and in the tests.
   - **`headerAdditions`** is an object with keys and string values to be added to the header of the `JWT`.
 
 ### **`getTokenFromGCPServiceAccount({ ... })`**
@@ -50,7 +45,6 @@ const getTokenFromGCPServiceAccount = async ({
   serviceAccountJSON,
   aud,
   alg = 'RS256',
-  cryptoImppl = null,
   expiredAfter = 3600,
   headerAdditions = {},
   payloadAdditions = {}
@@ -63,7 +57,7 @@ Where:
   - **`aud`** is the audience field in the `JWT`'s payload. e.g. `https://www.googleapis.com/oauth2/v4/token`'.
   - **`expiredAfter`** - the duration of the token's validity. Defaults to 1 hour - 3600 seconds.
   - **`payloadAdditions`** is an object with keys and string values to be added to the payload of the `JWT`. Example - `{ scope: 'https://www.googleapis.com/auth/chat.bot' }`.
-  - **`alg`**, **`cryptoImpl`**, **`headerAdditions`** are defined as above.
+  - **`alg`**, **`headerAdditions`** are defined as above.
 
 
 ## Example
@@ -84,7 +78,7 @@ For `Firestore` the `aud` is `https://firestore.googleapis.com/google.firestore.
 Cloudflare Workers expose the `crypto` global for the `Web Crypto API`.
 
 ~~~js
-const { getTokenFromGCPServiceAccount } = require('@sagi.io/workers-jwt')
+const { getTokenFromGCPServiceAccount } = require('@mattreid.dev/workers-jwt')
 
 const serviceAccountJSON = await ENVIRONMENT.get('SERVICE_ACCOUNT_JSON','json')
 const aud = `https://firestore.googleapis.com/google.firestore.v1.Firestore`
@@ -104,21 +98,4 @@ const docUrl =
 const response = await fetch(docUrl, { headers })
 
 const documentObj =  await response.json()
-~~~
-
-## Node Usage
-
-We use the `node-webcrypto-ossl` package to imitate the `Web Crypto API` in Node.
-
-~~~js
-const { Crytpo }= require('node-webcrypto-ossl');
-const cryptoImpl  = new Crypto();
-const { getTokenFromGCPServiceAccount } = require('@sagi.io/workers-jwt')
-
-const serviceAccountJSON = { ... }
-const aud = `https://firestore.googleapis.com/google.firestore.v1.Firestore`
-
-const token = await getTokenFromGCPServiceAccount({ serviceAccountJSON, aud, cryptoImpl } )
-
-<... SAME AS CLOUDFLARE WORKERS ...>
 ~~~

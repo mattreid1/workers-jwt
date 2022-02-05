@@ -1,9 +1,9 @@
 {
-  "name": "@sagi.io/workers-jwt",
-  "version": "0.0.20",
+  "name": "@mattreid.dev/workers-jwt",
+  "version": "0.1.1",
   "description": "Generate JWTs on Cloudflare Workers using the WebCrypto API",
-  "author": "Sagi Kedmi <git@sagi.io> (https://sagi.io)",
-  "homepage": "https://sagi.io",
+  "author": "Sagi Kedmi <git@sagi.io> (https://sagi.io), modified by Matt Reid <hello@mattreid.dev> (https://mattreid.dev)",
+  "homepage": "https://mattreid.dev",
   "main": "index.js",
   "license": "MIT",
   "private": false,
@@ -14,7 +14,6 @@
     "test": "yarn build && yarn jest"
   },
   "dependencies": {
-    "@sagi.io/globalthis": "^0.0.2",
     "js-base64": "^3.6.0"
   },
   "devDependencies": {
@@ -29,7 +28,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/sagi/workers-jwt.git"
+    "url": "https://github.com/mattreid1/workers-jwt.git"
   },
   "keywords": ["cloudflare", "workers", "cloudflare workers", "jwt", "gcp", "service account", "firestore", "oauth", "oauth2"]
 }

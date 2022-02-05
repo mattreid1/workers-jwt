@@ -1,4 +1,3 @@
-import '@sagi.io/globalthis';
 import { Base64 } from 'js-base64';
 
 export const str2ab = (str) => {

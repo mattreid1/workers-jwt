@@ -1,5 +1,4 @@
 import { getEncodedMessage, getDERfromPEM, str2ab } from './utils';
-import '@sagi.io/globalthis';
 import { Base64 } from 'js-base64';
 
 export const algorithms = {
@@ -25,21 +24,11 @@ export const getToken = async ({
   privateKeyPEM,
   payload,
   alg = 'RS256',
-  cryptoImpl = null,
   headerAdditions = {},
 }) => {
   const algorithm = algorithms[alg];
   if (!algorithm) {
-    throw new Error(`@sagi.io/workers-jwt: Unsupported algorithm ${alg}.`);
-  }
-
-  if (!globalThis.crypto) {
-    if (!cryptoImpl) {
-      throw new Error(
-        `@sagi.io/workers-jwt: No crypto nor cryptoImpl were found.`
-      );
-    }
-    globalThis.crypto = cryptoImpl;
+    throw new Error(`@mattreid.dev/workers-jwt: Unsupported algorithm ${alg}.`);
   }
 
   const privateKeyDER = getDERfromPEM(privateKeyPEM);
@@ -74,7 +63,6 @@ export const getTokenFromGCPServiceAccount = async ({
   serviceAccountJSON,
   aud,
   alg = 'RS256',
-  cryptoImpl = null,
   expiredAfter = 3600,
   headerAdditions = {},
   payloadAdditions = {},
@@ -94,5 +82,5 @@ export const getTokenFromGCPServiceAccount = async ({
   const sub = clientEmail;
   const payload = { aud, iss, sub, iat, exp, ...payloadAdditions };
 
-  return getToken({ privateKeyPEM, payload, alg, headerAdditions, cryptoImpl });
+  return getToken({ privateKeyPEM, payload, alg, headerAdditions });
 };
